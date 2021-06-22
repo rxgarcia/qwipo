@@ -32,6 +32,9 @@ const Post = (props) => {
             <div className="post-display-count">
                 <DisplayVoteCount upvotes={initUpvotes} downvotes={initDownvotes} />
             </div>
+            <div>
+                {props.timeToExpire}
+            </div>
         </div>
     );
 };

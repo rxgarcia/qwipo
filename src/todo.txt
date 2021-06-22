@@ -1,0 +1,3 @@
+-style countdown sliders
+-style post cards and everything
+-get time better.. so user knwos how long

@@ -1,12 +1,10 @@
 const DisplayVoteCount = (props) => {
-    return <div>
+    return (
         <div>
-            {props.upvotes}
+            <div>{props.upvotes}</div>
+            <div>{props.downvotes}</div>
         </div>
-        <div>
-            {props.downvotes}
-        </div>
-    </div>;
-}
+    );
+};
 
 export default DisplayVoteCount;
