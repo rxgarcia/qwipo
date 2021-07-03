@@ -3,17 +3,21 @@ import "./NewCountdown.css";
 import Countdown from "react-countdown";
 
 const NewCountdown = (props) => {
-    // const [currTimeLeft, setCurrTimeLeft] = useState(props.timeLeft);
 
-    // const handleTimeLeft = () => {
-    //     setCurrTimeLeft((currTimeLeft) => {
-    //         return currTimeLeft - 1;
-    //     });
-    //     console.log(currTimeLeft);
-    // }
+
+    const handleDoNothing = () => {
+        
+    }
+
+    const handleCompletion = (event) => { // kinda confused on what to do??
+        console.log(event);
+        props.onDone(props.postKey);
+        return 1;
+    }
 
     return (
         <Countdown
+            onComplete={handleCompletion}
             date={Date.now() + props.timeLeft * 1000}
             renderer={(rend) => {
                 return (
@@ -23,6 +27,7 @@ const NewCountdown = (props) => {
                             value={rend.total}
                             min="0"
                             max={props.timeLeft * 1000}
+                            onChange={handleDoNothing}
                         />
                     </div>
                 );

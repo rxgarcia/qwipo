@@ -8,8 +8,6 @@ const Post = (props) => {
     const [initUpvotes, setUpvotes] = useState(props.upvotes);
     const [initDownvotes, setDownvotes] = useState(props.downvotes);
 
-    console.log(props);
-
     const handleVote = (event) => {
         if (!voted) {
             setVoted(true);

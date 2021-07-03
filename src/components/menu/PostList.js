@@ -2,7 +2,6 @@ import "./PostList.css";
 import Post from "./Post";
 
 const PostList = (props) => {
-  console.log(props);
 
   return (
     <div className="post-list">
