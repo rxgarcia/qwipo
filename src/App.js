@@ -1,116 +1,117 @@
-import {useState,  useEffect} from "react";
-import "./App.css";
+import { useEffect, useState } from "react";
+import "./styles/App.css";
 import PostList from "./components/menu/PostList";
 import NewPost from "./components/NewPostPage/NewPost";
-import "./components/NewPostPage/NewPost.css";
-// import NewCountdown from "./components/menu/NewCountdown";
-import NavBar from './components/NavBar/NavBar';
+import NavBar from "./components/NavBar/NavBar";
+import Post from "./components/menu/Post";
+import { addDoc, collection } from "@firebase/firestore";
+import db from "./firebaseDB/firebase";
+import { getDocs } from "firebase/firestore";
 
-// const initPosts = [
-//   {
-//     key: Math.random().toString(),
-//     text: "HEYYYYY first Post!!",
-//     upvotes: 34,
-//     downvotes: 12,
-//     timeToExpire: <NewCountdown timeLeft={4} />,
-//   },
-//   {
-//     key: Math.random().toString(),
-//     text: "second post omg",
-//     upvotes: 67,
-//     downvotes: 32,
-//     timeToExpire: <NewCountdown timeLeft={20} />,
-//   },
-//   {
-//     key: Math.random().toString(),
-//     text: "yooooo",
-//     upvotes: 342,
-//     downvotes: 121,
-//     timeToExpire: <NewCountdown timeLeft={60} />,
-//   },
-// ];
+const initPosts = [
+  // <Post
+  //   key={Math.random().toString()}
+  //   text="HEYYYYY first Post!!"
+  //   upvotes={34}
+  //   downvotes={12}
+  //   timeToExpire={<NewCountdown timeLeft={4} />}
+  // />,
+  // <Post
+  //   key={Math.random().toString()}
+  //   text="Second Post!!"
+  //   upvotes={123}
+  //   downvotes={62}
+  //   timeToExpire={<NewCountdown timeLeft={30} />}
+  // />,
+];
 
 const App = () => {
-  const [postsList, setPostsLists] = useState([]);
+  const [postsList, setPostsLists] = useState(initPosts);
   const [currPage, setCurrPage] = useState("home");
-  // const [loading, setLoading] = useState(false);
 
-  // const fetchPosts = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await fetch('');
-  //     if (!response.ok) {
-  //       throw new Error('problem getting response');
-  //     }
-      
-  //     const data = await response.json();
-  //     console.log(data);
-  //     const loadedPosts = [];
-  //     for (const i in data) {
-  //       loadedPosts.push({
-  //         key: data[i].key,
-  //         text: data[i].text,
-  //         upvotes: data[i].upvotes,
-  //         downvotes: data[i].downvotes,
-  //         timeToExpire: <NewCountdown timeLeft={data[i].timeToExpire.props.timeLeft} onDone={handleDeletePost} postKey={data[i].key}/>,
-  //       });
-  //     }
-  //     console.log(loadedPosts);
-  //     setPostsLists(loadedPosts);
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  //   setLoading(false);
-  // };
+  const handleNewPost = async (newPostObj) => {
+    let firebasePostDoc;
+    try {
+      firebasePostDoc = await addDoc(collection(db, "posts"), {
+        text: newPostObj.text,
+        upvotes: 0,
+        downvotes: 0,
+        timeToExpire: newPostObj.timeToExpire.props.timeLeft, // need to fix this... but problem for later
+      });
+    } catch (e) {
+      console.error("error: ", e);
+    }
 
-  const addPostHandler = async (post) => {
-    // const response = await fetch('', {
-    //   method: 'POST',
-    //   body: JSON.stringify(post),
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   }
-    // });
-    // const data = await response.json();
-  }
+    const newPostComponent = (
+      <Post
+        key={firebasePostDoc.id}
+        id={firebasePostDoc.id}
+        text={newPostObj.text}
+        upvotes={0}
+        downvotes={0}
+        timeToExpire={newPostObj.timeToExpire.props.timeLeft}
+      />
+    );
 
-  useEffect(() => {
-    // const timer = setTimeout(() => {
-    //   console.log(postsList);
-    //   fetchPosts();
-    // }, 2000);
-    return () => {};
-  }, [postsList])
-
-  // const handleDeletePost = (postKey) => {
-  //   console.log('removing post w key: ' + postKey);
-  // }
-
-  const handleNewPost = (newPost) => {
-    addPostHandler(newPost);
     setPostsLists((prevPostsList) => {
-      return [newPost, ...prevPostsList];
+      return [newPostComponent, ...prevPostsList];
     });
   };
 
+  const loadPosts = async () => {
+    const newPosts = [];
+    const querySnapshot = await getDocs(collection(db, "posts"));
+    querySnapshot.forEach((doc) => {
+      for (let index in postsList) {
+        if (doc.id === postsList[index].key) {
+          return;
+        }
+      }
+      const newPostDoc = doc.data();
+      const newPostComponent = (
+        <Post
+          key={doc.id}
+          id={doc.id}
+          text={newPostDoc.text}
+          upvotes={newPostDoc.upvotes}
+          downvotes={newPostDoc.downvotes}
+          timeToExpire={newPostDoc.timeToExpire}
+        />
+      );
+      newPosts.push(newPostComponent);
+    });
+    setPostsLists((prevPostsList) => {
+      return [...newPosts, ...prevPostsList];
+    });
+  };
+
+  // const updateLocalPosts = () => {
+  //   setPostsLists((prevPostsList) => {
+  //     prevPostsList.forEach((post) => {
+  //       // want to save the state of timeLeft for each individual post... currently deletes cuz making new postsList obj
+  //     })
+  //   })
+  // }
+
+  useEffect(() => {
+    loadPosts();
+  }, []);
+
   const changePageHandler = (newPage) => {
     setCurrPage(newPage);
-  }
-
+  };
   let content;
-
   if (currPage === "home") {
-
+    // updateLocalPosts();
     content = <PostList posts={postsList} />;
-  }
-  if (currPage === "post") {
+    console.log(postsList);
+  } else if (currPage === "post") {
     content = (
       <div className="new-post-link">
         <NewPost onNewPost={handleNewPost} />
       </div>
     );
-  }
-  if (currPage === "profile") {
+  } else if (currPage === "profile") {
     content = <div>Under Construction</div>;
   }
 

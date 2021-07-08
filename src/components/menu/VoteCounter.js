@@ -1,24 +1,24 @@
-import "./VoteCounter.css";
+import "../../styles/VoteCounter.css";
 
 const VoteCounter = (props) => {
-    const handleUpvote = () => {
-        props.onVote(1);
-    };
+  const handleUpvote = () => {
+    props.onVote(1);
+  };
 
-    const handleDownvote = () => {
-        props.onVote(0);
-    };
+  const handleDownvote = () => {
+    props.onVote(0);
+  };
 
-    return (
-        <div>
-            <button className="upvote" onClick={handleUpvote}>
-                Upvote
+  return (
+    <div>
+      <button className="upvote" onClick={handleUpvote}>
+        :)
       </button>
-            <button className="upvote" onClick={handleDownvote}>
-                Downvote
+      <button className="upvote" onClick={handleDownvote}>
+        :(
       </button>
-        </div>
-    );
+    </div>
+  );
 };
 
 export default VoteCounter;

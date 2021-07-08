@@ -1,6 +1,5 @@
 import { useState } from "react";
 import NewCountdown from "../menu/NewCountdown";
-import "./NewPost.css";
 
 const NewPost = (props) => {
   const [postText, setPostText] = useState("");
@@ -21,14 +20,12 @@ const NewPost = (props) => {
 
     if (postText.length > 0) {
       // create new post object
-      const newPost = {
-        key: Math.random().toString(),
+      props.onNewPost({
         text: postText,
         upvotes: 0,
         downvotes: 0,
         timeToExpire: <NewCountdown timeLeft={postTimeToExpire} />,
-      };
-      props.onNewPost(newPost);
+      });
       setPostText("");
       // setPostInvalid(false);
     }

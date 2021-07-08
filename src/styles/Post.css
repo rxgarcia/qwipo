@@ -1,0 +1,27 @@
+.post-card {
+    background-color: rgb(126, 117, 106);
+    width: 500px;
+    height: 6rem;
+    margin-bottom: 30px;
+    border-radius: 1rem;
+    text-align: center;
+}
+
+.post-vote-counter {
+    float: left;
+    margin-left: 1rem;
+    margin-top: 1.5rem;
+}
+
+.post-text {
+    font-size: 2vwh;
+    display: inline-block;
+    margin-top: 1.5rem;
+    background-color: blue;
+}
+
+.post-display-count {
+    float: right;
+    margin-right: 1rem;
+    margin-top: 1rem;
+}

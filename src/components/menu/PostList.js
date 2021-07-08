@@ -1,20 +1,10 @@
-import "./PostList.css";
-import Post from "./Post";
+import "../../styles/PostList.css";
 
 const PostList = (props) => {
 
   return (
     <div className="post-list">
       {props.posts
-        .map((post) => (
-          <Post
-            key={post.key}
-            text={post.text}
-            upvotes={post.upvotes}
-            downvotes={post.downvotes}
-            timeToExpire={post.timeToExpire}
-          />
-        ))
         .sort((p1, p2) => {
           console.log("sorting");
           return (

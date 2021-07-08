@@ -1,4 +1,4 @@
-import "./NewCountdown.css";
+import "../../styles/NewCountdown.css";
 // import { useState } from "react";
 import Countdown from "react-countdown";
 
@@ -11,7 +11,7 @@ const NewCountdown = (props) => {
 
     const handleCompletion = (event) => { // kinda confused on what to do??
         console.log(event);
-        props.onDone(props.postKey);
+        // props.onDone(props.postKey);
         return 1;
     }
 
