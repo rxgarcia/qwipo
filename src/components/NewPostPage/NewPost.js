@@ -27,7 +27,6 @@ const NewPost = (props) => {
         timeToExpire: <NewCountdown timeLeft={postTimeToExpire} />,
       });
       setPostText("");
-      // setPostInvalid(false);
     }
   };
 
@@ -39,7 +38,7 @@ const NewPost = (props) => {
           <input
             type="range"
             min="1"
-            max="100"
+            max="86400"
             value={postTimeToExpire}
             onChange={handleTimeChange}
             className="timeSlider"

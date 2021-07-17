@@ -1,4 +1,6 @@
 import "../../styles/VoteCounter.css";
+import upvote from '../../assets/upvote.png';
+import downvote from '../../assets/downvote.png';
 
 const VoteCounter = (props) => {
   const handleUpvote = () => {
@@ -11,12 +13,8 @@ const VoteCounter = (props) => {
 
   return (
     <div>
-      <button className="upvote" onClick={handleUpvote}>
-        :)
-      </button>
-      <button className="upvote" onClick={handleDownvote}>
-        :(
-      </button>
+      <img className="downvote-button upvote-button" src={upvote} onClick={handleUpvote}/>
+      <img className="downvote-button" src={downvote} onClick={handleDownvote}/>
     </div>
   );
 };
