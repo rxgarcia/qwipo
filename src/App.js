@@ -28,11 +28,12 @@ const App = () => {
     console.log("PROF");
     content = <div>Under Construction</div>;
   }
+  console.log("APP CURRENT PAGE::: ", ctx.currentPage);
 
   return (
     <div className="App-header">
       <header className="App-title">quickrd</header>
-      <NavBar onChangePage={ctx.handlePageChange} />
+      <NavBar onChangePage={ctx.handlePageChange} currPage={ctx.currentPage}/>
       {content}
     </div>
   );

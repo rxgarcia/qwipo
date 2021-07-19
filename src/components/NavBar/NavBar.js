@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../../styles/NavBar.css";
 import newPostImg from "../../assets/new_post.png";
 import homeImg from "../../assets/home-logo.png";
 import profileImg from "../../assets/profile-logo.png";
+import Context from "../../store/MyContext";
 
 const NavBar = (props) => {
+
   const handleNewPost = () => {
     props.onChangePage("post");
   };
@@ -24,7 +26,7 @@ const NavBar = (props) => {
           <ul className="navbar-buttons">
             <li className="navbar-item">
               <img
-                className="new-post"
+                className={`new-post ${props.currPage === 'post' ? 'highlighted-item' : ''}`}
                 src={newPostImg}
                 onClick={handleNewPost}
                 alt="new post"
@@ -32,7 +34,7 @@ const NavBar = (props) => {
             </li>
             <li className="navbar-item">
               <img
-                className="home"
+                className={`home ${props.currPage === 'home' ? 'highlighted-item' : ''}`}
                 src={homeImg}
                 onClick={handleHome}
                 alt="home"
@@ -40,7 +42,7 @@ const NavBar = (props) => {
             </li>
             <li className="navbar-item">
               <img
-                className="profile"
+                className={`profile ${props.currPage === 'profile' ? 'highlighted-item' : ''}`}
                 src={profileImg}
                 onClick={handleProfile}
                 alt="profile"
