@@ -1,14 +1,14 @@
 .post-card {
     background-color: rgba(126, 117, 106, 0.5);
-    width: 500px;
-    height: 6rem;
+    max-width: 600px;
+    min-width: 500px;
+    height: fit-content;
     margin-bottom: 30px;
     border-radius: 1rem;
     text-align: center;
 }
 
 .post-vote-counter {
-    z-index: 3;
     float: left;
     margin-left: 1rem;
     margin-top: 1.5rem;
@@ -17,15 +17,16 @@
 .post-text {
     font-size: 2vwh;
     display: inline-block;
-    margin-top: 1.5rem;
-    background-color: blue;
+    margin-top: 2.5%;
+    width: 75%;
+    height: 75%;
+    border-radius: .5rem;
 }
 
 .post-display-count {
     float: right;
     margin-right: 1rem;
-    margin-top: 1rem;
-    margin-bottom: -20px;
+    margin-top: .7rem;
 }
 
 .post-slider-div {
@@ -42,31 +43,31 @@
 }
 
 .post-slider__90 {
-    background-color:rgba(109, 255, 96, 0.774); /* Grey background */
+    background-color:rgba(109, 255, 96, 0.8); /* Grey background */
 }
 .post-slider__80 {
-    background-color:rgba(160, 255, 96, 0.774); /* Grey background */
+    background-color:rgba(160, 255, 96, 0.8); /* Grey background */
 }
 .post-slider__70 {
-    background-color:rgba(194, 255, 96, 0.774); /* Grey background */
+    background-color:rgba(194, 255, 96, 0.8); /* Grey background */
 }
 .post-slider__60 {
-    background-color:rgba(231, 255, 96, 0.774); /* Grey background */
+    background-color:rgba(231, 255, 96, 0.8); /* Grey background */
 }
 .post-slider__50 {
-    background-color:rgba(255, 239, 96, 0.774); /* Grey background */
+    background-color:rgba(255, 239, 96, 0.8); /* Grey background */
 }
 .post-slider__40 {
-    background-color:rgba(255, 205, 96, 0.774); /* Grey background */
+    background-color:rgba(255, 205, 96, 0.8); /* Grey background */
 }
 .post-slider__30 {
-    background-color:rgba(255, 173, 96, 0.774); /* Grey background */
+    background-color:rgba(255, 173, 96, 0.8); /* Grey background */
 }
 .post-slider__20 {
-    background-color:rgba(255, 141, 96, 0.774); /* Grey background */
+    background-color:rgba(255, 141, 96, 0.8); /* Grey background */
 }
 .post-slider__10 {
-    background-color:rgba(255, 96, 96, 0.774); /* Grey background */
+    background-color:rgba(255, 96, 96, 0.8); /* Grey background */
 }
 
 
@@ -74,6 +75,7 @@
     -webkit-appearance: none; /* Override default look */
     appearance: none;
     border: 0;
+    margin-top: 20px;
     height: 20px;
     width: 20px;
     background-image: url(../assets/red_clock_small.png);

@@ -1,4 +1,8 @@
 import React from "react";
+import "../../styles/NavBar.css";
+import newPostImg from "../../assets/new_post.png";
+import homeImg from "../../assets/home-logo.png";
+import profileImg from "../../assets/profile-logo.png";
 
 const NavBar = (props) => {
   const handleNewPost = () => {
@@ -15,12 +19,34 @@ const NavBar = (props) => {
 
   return (
     <React.Fragment>
-      <header>
+      <header className="navbar-header">
         <div>
-          <button onClick={handleNewPost}>New Post</button>
-          <button onClick={handleHome}>Home</button>
-          <button onClick={handleProfile}>Profile</button>
-          <hr></hr>
+          <ul className="navbar-buttons">
+            <li className="navbar-item">
+              <img
+                className="new-post"
+                src={newPostImg}
+                onClick={handleNewPost}
+                alt="new post"
+              />
+            </li>
+            <li className="navbar-item">
+              <img
+                className="home"
+                src={homeImg}
+                onClick={handleHome}
+                alt="home"
+              />
+            </li>
+            <li className="navbar-item">
+              <img
+                className="profile"
+                src={profileImg}
+                onClick={handleProfile}
+                alt="profile"
+              />
+            </li>
+          </ul>
         </div>
       </header>
     </React.Fragment>

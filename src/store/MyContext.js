@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Post from "../components/menu/Post";
 
-import { addDoc, collection, doc} from "@firebase/firestore";
+import { addDoc, collection, doc } from "@firebase/firestore";
 import db from "../firebaseDB/firebase";
-import { deleteDoc, getDoc, getDocs, increment, updateDoc } from "firebase/firestore";
+import {
+  deleteDoc,
+  getDoc,
+  getDocs,
+  increment,
+  updateDoc,
+} from "firebase/firestore";
 
 const Context = React.createContext({
   postsList: [],
@@ -15,18 +21,16 @@ const Context = React.createContext({
 });
 
 export const ContextProvider = (props) => {
-
   const [postsList, setPostsList] = useState([]);
   const [currentPage, setCurrentPage] = useState("home");
 
   useEffect(() => {
-      const storedPostsList = localStorage.getItem("postsList");
-      if (storedPostsList === null) {
-        console.log("setting post list");
-          setPostsList(storedPostsList);
-      }
+    const storedPostsList = JSON.parse(localStorage.getItem("postsList"));
+    if (storedPostsList !== null) {
+      console.log(JSON.parse(localStorage.getItem(postsList)));
+      setPostsList(storedPostsList);
+    }
   }, []);
-
 
   const handleNewPost = async (newPostObj) => {
     let firebasePostDoc;
@@ -57,7 +61,7 @@ export const ContextProvider = (props) => {
       return [newPostComponent, ...prevPostsList];
     });
 
-    localStorage.setItem("postsList", postsList);
+    localStorage.setItem("postsList", JSON.stringify(postsList));
   };
 
   const loadPosts = async () => {
@@ -82,40 +86,38 @@ export const ContextProvider = (props) => {
         />
       );
       newPosts.push(newPostComponent);
-      // below should incriment the viewers of this post, 
+      // below should incriment the viewers of this post,
       // which would only be accessed again when it deletes for everyone
       const docRef = queryDoc.ref;
       await updateDoc(docRef, {
         viewers: increment(1),
-      })
+      });
       console.log("uhh");
     });
     setPostsList((prevPostsList) => {
       return [...newPosts, ...prevPostsList];
     });
 
-    localStorage.setItem("postsList", postsList);
+    localStorage.setItem("postsList", JSON.stringify(postsList));
   };
 
   const hidePost = async (postID) => {
-
     // decriment viewers
     const docRef = doc(db, "posts", postID);
     await updateDoc(docRef, {
       viewers: increment(-1),
-    })
+    });
     const docData = await getDoc(docRef);
     if (docData.data().viewers < 1) {
       console.log("deleted document:", postID);
       await deleteDoc(docRef);
     }
-    
-    console.log("hide Post: ", postID);
-    setPostsList(prev => {
-      return prev.filter(post => post.props.id !== postID);
-    });
 
-  }
+    console.log("hide Post: ", postID);
+    setPostsList((prev) => {
+      return prev.filter((post) => post.props.id !== postID);
+    });
+  };
 
   const handlePageChange = (newPage) => {
     console.log("changing page in ctx");
@@ -139,4 +141,3 @@ export const ContextProvider = (props) => {
 };
 
 export default Context;
-

@@ -1,11 +1,9 @@
 import "../../styles/PostList.css";
 
 const PostList = (props) => {
-  const postList = props.posts;
-
   return (
     <div className="post-list">
-      {postList
+      {props.posts && props.posts
         .sort((p1, p2) => {
           console.log("sorting");
           return (

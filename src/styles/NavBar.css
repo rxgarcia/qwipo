@@ -1,0 +1,27 @@
+
+.navbar-header {
+    margin: 1%;
+}
+
+.navbar-buttons {
+  list-style-type: none;
+  display: inline;
+  margin-right: -30px;
+}
+
+.navbar-item {
+    display: inline;
+    margin-right: 70px;
+}
+
+.new-post {
+  filter: invert(100%);
+}
+
+.home {
+  filter: invert(100%);
+}
+
+.profile {
+  filter: invert(100%);
+}
