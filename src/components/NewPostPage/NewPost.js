@@ -1,10 +1,12 @@
 import { useState } from "react";
 import NewCountdown from "../menu/NewCountdown";
+import Modal from "../Modal/Modal";
+import '../../styles/NewPost.css';
 
 const NewPost = (props) => {
   const [postText, setPostText] = useState("");
   // const [postInvalid, setPostInvalid] = useState(false);
-  const [postTimeToExpire, setTimeToExpire] = useState(10);
+  const [postTimeToExpire, setTimeToExpire] = useState(3600);
 
   const handleInputChange = (event) => {
     setPostText(event.target.value);
@@ -31,22 +33,24 @@ const NewPost = (props) => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmitPost}>
-        <input type="text" value={postText} onChange={handleInputChange} />
+    <Modal onClose={props.onClose} modalStyle={"modal-overlay-style"}>
+      <form onSubmit={handleSubmitPost} className="new-post-form">
+        <textarea type="text" value={postText} onChange={handleInputChange} className="new-post-input"/>
         <div className="timeSelector">
+          1 Hr
           <input
             type="range"
-            min="1"
+            min="3600"
             max="86400"
             value={postTimeToExpire}
             onChange={handleTimeChange}
             className="timeSlider"
           />
+          24 Hr
         </div>
-        <button type="submit">Post</button>
+        <button type="submit" className="new-post-submit">Post</button>
       </form>
-    </div>
+    </Modal>
   );
 };
 

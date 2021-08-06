@@ -67,7 +67,10 @@ export const ContextProvider = (props) => {
   const loadPosts = async () => {
     console.log("loading posts from context");
     const newPosts = [];
+    console.log("YOOOOOOO");
+
     const querySnapshot = await getDocs(collection(db, "posts"));
+
     querySnapshot.forEach(async (queryDoc) => {
       for (let index in postsList) {
         if (queryDoc.id === postsList[index].key) {
@@ -97,7 +100,6 @@ export const ContextProvider = (props) => {
     setPostsList((prevPostsList) => {
       return [...newPosts, ...prevPostsList];
     });
-
     localStorage.setItem("postsList", JSON.stringify(postsList));
   };
 

@@ -1,40 +1,52 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./styles/App.css";
 import PostList from "./components/menu/PostList";
 import NewPost from "./components/NewPostPage/NewPost";
 import NavBar from "./components/NavBar/NavBar";
 import Context from "./store/MyContext";
+import Modal from "./components/Modal/Modal";
+import ProfilePage from "./components/profile/ProfilePage";
+import profilePic from "./assets/rigo_cat_profile.png";
+
+const currentUser = {
+  key: Math.random().toString(),
+  name: "Rigo",
+  profilePic: profilePic,
+  numberPosts: 176,
+  upvotes: 1234,
+  downvotes: 456,
+};
 
 const App = () => {
+  const [showCreatePost, setCreatePost] = useState(false);
   const ctx = useContext(Context);
-  console.log("refreshed app");
-  console.log(ctx.currentPage);
   useEffect(() => {
     ctx.loadPosts();
   }, []);
+  console.log(" Refreshed App | APP CURRENT PAGE::: ", ctx.currentPage);
 
-  let content;
-  if (ctx.currentPage === "home") {
-    console.log("HOME");
-    content = <PostList posts={ctx.postsList} />;
-  } else if (ctx.currentPage === "post") {
-    console.log("POST");
-    content = (
-      <div className="new-post-link">
-        <NewPost onNewPost={ctx.handleNewPost} />
-      </div>
-    );
-  } else if (ctx.currentPage === "profile") {
-    console.log("PROF");
-    content = <div>Under Construction</div>;
-  }
-  console.log("APP CURRENT PAGE::: ", ctx.currentPage);
+  const hideModal = () => {
+    ctx.handlePageChange("home");
+  };
 
   return (
     <div className="App-header">
       <header className="App-title">quickrd</header>
-      <NavBar onChangePage={ctx.handlePageChange} currPage={ctx.currentPage}/>
-      {content}
+      <NavBar onChangePage={ctx.handlePageChange} currPage={ctx.currentPage} />
+      {ctx.currentPage === "post" && (
+        <NewPost onNewPost={ctx.handleNewPost} onClose={hideModal} />
+      )}
+      {ctx.currentPage === "profile" && (
+        <ProfilePage
+          onClose={hideModal}
+          profilePic={currentUser.profilePic}
+          name={currentUser.name}
+          numberPosts={currentUser.numberPosts}
+          upvotes={currentUser.upvotes}
+          downvotes={currentUser.downvotes}
+        />
+      )}
+      <PostList posts={ctx.postsList} />
     </div>
   );
 };
