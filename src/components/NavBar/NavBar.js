@@ -1,9 +1,8 @@
-import React, { useContext } from "react";
+import React from "react";
 import "../../styles/NavBar.css";
 import newPostImg from "../../assets/new_post.png";
 import homeImg from "../../assets/home-logo.png";
 import profileImg from "../../assets/profile-logo.png";
-import Context from "../../store/MyContext";
 
 const NavBar = (props) => {
 

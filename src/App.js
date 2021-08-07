@@ -1,24 +1,13 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import "./styles/App.css";
 import PostList from "./components/menu/PostList";
 import NewPost from "./components/NewPostPage/NewPost";
 import NavBar from "./components/NavBar/NavBar";
 import Context from "./store/MyContext";
-import Modal from "./components/Modal/Modal";
 import ProfilePage from "./components/profile/ProfilePage";
-import profilePic from "./assets/rigo_cat_profile.png";
-
-const currentUser = {
-  key: Math.random().toString(),
-  name: "Rigo",
-  profilePic: profilePic,
-  numberPosts: 176,
-  upvotes: 1234,
-  downvotes: 456,
-};
+import LoginPage from "./components/profile/LoginPage";
 
 const App = () => {
-  const [showCreatePost, setCreatePost] = useState(false);
   const ctx = useContext(Context);
   useEffect(() => {
     ctx.loadPosts();
@@ -29,23 +18,34 @@ const App = () => {
     ctx.handlePageChange("home");
   };
 
+  console.log(ctx.currentUser);
+
   return (
     <div className="App-header">
       <header className="App-title">quickrd</header>
       <NavBar onChangePage={ctx.handlePageChange} currPage={ctx.currentPage} />
-      {ctx.currentPage === "post" && (
+
+      {ctx.currentUser !== null && ctx.currentPage === "post" && (
         <NewPost onNewPost={ctx.handleNewPost} onClose={hideModal} />
       )}
-      {ctx.currentPage === "profile" && (
+
+      {ctx.currentUser !== null && ctx.currentPage === "profile" && (
         <ProfilePage
           onClose={hideModal}
-          profilePic={currentUser.profilePic}
-          name={currentUser.name}
-          numberPosts={currentUser.numberPosts}
-          upvotes={currentUser.upvotes}
-          downvotes={currentUser.downvotes}
+          profilePic={ctx.currentUser.imgURL}
+          name={ctx.currentUser.name}
+          numberPosts={ctx.currentUser.numPosts}
+          upvotes={ctx.currentUser.upvotes}
+          downvotes={ctx.currentUser.downvotes}
         />
       )}
+
+      {ctx.currentUser === null &&
+        (ctx.currentPage === "post" || ctx.currentPage === "profile") && (
+          <LoginPage onClose={hideModal}/>
+        )
+      }
+
       <PostList posts={ctx.postsList} />
     </div>
   );

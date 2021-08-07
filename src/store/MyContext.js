@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Post from "../components/menu/Post";
 
+// firestore imports
 import { addDoc, collection, doc } from "@firebase/firestore";
 import db from "../firebaseDB/firebase";
 import {
@@ -8,8 +9,17 @@ import {
   getDoc,
   getDocs,
   increment,
+  setDoc,
   updateDoc,
 } from "firebase/firestore";
+
+// auth imports
+import { auth } from "../firebaseDB/firebase";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider } from "@firebase/auth";
+import { signInWithPopup, signInWithRedirect } from "firebase/auth";
+
+const provider = new GoogleAuthProvider();
+
 
 const Context = React.createContext({
   postsList: [],
@@ -18,19 +28,116 @@ const Context = React.createContext({
   currentPage: "",
   handlePageChange: () => {},
   hidePost: () => {},
+  currentUser: {},
+  handleLogin: () => {},
+  handleSignup: () => {},
+  handleWithGoogle: () => {},
 });
 
 export const ContextProvider = (props) => {
   const [postsList, setPostsList] = useState([]);
   const [currentPage, setCurrentPage] = useState("home");
+  const [currentUser, setCurrentUser] = useState(null);
 
-  useEffect(() => {
-    const storedPostsList = JSON.parse(localStorage.getItem("postsList"));
-    if (storedPostsList !== null) {
-      console.log(JSON.parse(localStorage.getItem(postsList)));
-      setPostsList(storedPostsList);
+  const handleWithGoogle = async () => {
+    let userObj;
+
+    signInWithPopup(auth, provider).then(async (result) => {
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      const user = result.user;
+      console.log(user);
+
+      // create user object and add to data base and state to present on profile page
+
+
+      // user exists in Firestore, get number posts & karmas
+      const userRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        console.log("USER WAS IN FIRESTORE !");
+        const userData = userDoc.data();
+        userObj = {
+          uid: user.uid,
+          name: user.displayName,
+          email: user.email,
+          imgURL: user.photoURL,
+          numPosts: userData.numPosts,
+          upvotes: userData.upvotes,
+          downvotes: userData.downvotes,
+        };
+      } else { // user does not exist in Firestore, so add them and init values
+        console.log("USER WAS *NOT* IN FIRESTORE !!!");
+        try {
+          const userObjPromise = await setDoc(userRef, {
+            uid: user.uid,
+            name: user.displayName,
+            email: user.email,
+            imgURL: user.photoURL,
+            numPosts: 0,
+            upvotes: 0,
+            downvotes: 0,
+          });
+        } catch (e) {
+          console.error("error: ", e);
+        }
+        userObj = {
+          uid: user.uid,
+          name: user.displayName,
+          email: user.email,
+          imgURL: user.photoURL,
+          numPosts: 0,
+          upvotes: 0,
+          downvotes: 0,
+        };
+      }
+    }).then(() => {
+      setCurrentUser(userObj);
+    }).catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const email = error.email;
+      const credential = GoogleAuthProvider.credentialFromError(error); 
+      console.log(errorCode); // why is this returning an undefined error when its working?  
+    });
+
+  }
+
+
+  const handleSignup = async (userObj) => {
+    console.log("signed up");
+    createUserWithEmailAndPassword(auth, userObj.email, userObj.password)
+      .then((u) => {
+        const user = u.user;
+        console.log(user);
+      })
+      .catch((e) => {
+        const errorCode = e.code;
+        const errorMsg = e.message;
+        console.log(errorCode, errorMsg);
+        console.log("ERROR CREATING USER");
+      });
+  };
+
+  const handleLogin = (userObj) => {
+    console.log("logged in");
+    signInWithEmailAndPassword(auth, userObj.email, userObj.password)
+      .then((u) => {
+        const user = u.user;
+        console.log(user);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const getPostsFromLocalStorage = () => {
+    // const storedPostsList = localStorage.getItem("postsList");
+    console.log(localStorage.getItem("postsList"));
+    if (localStorage.getItem("postsList") !== null) {
+      setPostsList(JSON.parse(localStorage.getItem("postsList")));
     }
-  }, []);
+  };
 
   const handleNewPost = async (newPostObj) => {
     let firebasePostDoc;
@@ -42,6 +149,17 @@ export const ContextProvider = (props) => {
         timeToExpire: newPostObj.timeToExpire.props.timeLeft, // need to fix this... but problem for later
         viewers: 1,
       });
+      // update post number in current user
+      await updateDoc(doc(db, "users", currentUser.uid), {
+        numPosts: increment(1),
+      })
+      // also update in current obj
+      // setCurrentUser(prev => {
+      //   let userObj = {...prev.userObj};
+      //   userObj.numPosts += 1;
+      //   return {userObj};
+      // })
+
     } catch (e) {
       console.error("error: ", e);
     }
@@ -66,9 +184,8 @@ export const ContextProvider = (props) => {
 
   const loadPosts = async () => {
     console.log("loading posts from context");
+    getPostsFromLocalStorage();
     const newPosts = [];
-    console.log("YOOOOOOO");
-
     const querySnapshot = await getDocs(collection(db, "posts"));
 
     querySnapshot.forEach(async (queryDoc) => {
@@ -135,6 +252,10 @@ export const ContextProvider = (props) => {
         currentPage: currentPage,
         handlePageChange: handlePageChange,
         hidePost: hidePost,
+        currentUser: currentUser,
+        handleLogin: handleLogin,
+        handleSignup: handleSignup,
+        handleWithGoogle: handleWithGoogle,
       }}
     >
       {props.children}

@@ -1,8 +1,13 @@
 import "../../styles/KarmaDisplay.css";
 
 const KarmaDisplay = (props) => {
-  const silderPosition =
-    (props.upvotes / (props.upvotes + props.downvotes)) * 100;
+
+  let silderPosition;
+  if (props.upvotes === props.downvotes && props.upvotes === 0) {
+    silderPosition = 50;
+  } else {
+    silderPosition = (props.upvotes / (props.upvotes + props.downvotes)) * 100;
+  }
   console.log(silderPosition);
 
   return (
