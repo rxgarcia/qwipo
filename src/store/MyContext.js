@@ -15,11 +15,14 @@ import {
 
 // auth imports
 import { auth } from "../firebaseDB/firebase";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider } from "@firebase/auth";
-import { signInWithPopup, signInWithRedirect } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+} from "@firebase/auth";
+import { signInWithPopup, signOut } from "firebase/auth";
 
 const provider = new GoogleAuthProvider();
-
 
 const Context = React.createContext({
   postsList: [],
@@ -33,75 +36,106 @@ const Context = React.createContext({
   handleSignup: () => {},
   handleWithGoogle: () => {},
   updateUserKarma: () => {},
+  handleLogout: () => {},
+  showPosterProfile: () => {},
+  posterProfile: {},
 });
 
 export const ContextProvider = (props) => {
   const [postsList, setPostsList] = useState([]);
   const [currentPage, setCurrentPage] = useState("home");
   const [currentUser, setCurrentUser] = useState(null);
+  const [posterProfile, setPosterProfile] = useState(null);
 
+  const showPosterProfile = async (postID) => {
+    setCurrentPage("posterProfile");
+    // go into post w postID, get posterID, go into poster user doc, 
+    // set posterProfile to data, display in app
+    const postRef = doc(db, "posts", postID);
+    const posterID = await (await getDoc(postRef)).data().posterID;
+    const posterRef = doc(db, "users", posterID);
+    const posterData = await (await getDoc(posterRef)).data();
+    setPosterProfile(posterData);
+  }
+
+
+  const handleLogout = () => {
+    console.log("bruh");
+    signOut(auth)
+      .then(() => {
+        setCurrentUser(null);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
 
   const updateUserKarma = async (vote, postID) => {
     const postRef = doc(db, "posts", postID);
-    const userRef = doc(db, "users", currentUser.uid);
+    const posterID = await (await getDoc(postRef)).data().posterID;
+    const posterRef = doc(db, "users", posterID);
     if (vote === 1) {
       await updateDoc(postRef, {
         upvotes: increment(1),
       });
-      await updateDoc(userRef, {
+      // update posters karma
+      await updateDoc(posterRef, {
         upvotes: increment(1)
-      })
-      setCurrentUser(prev => {
-        let userObj = {...prev};
-        userObj.upvotes += 1;
-        return userObj;
       })
     } else {
       await updateDoc(postRef, {
         downvotes: increment(1),
       });
-      await updateDoc(userRef, {
+      await updateDoc(posterRef, {
         downvotes: increment(1)
       })
-      setCurrentUser(prev => {
-        let userObj = {...prev};
-        userObj.downvotes += 1;
-        return userObj;
-      })
     }
-  }
+  };
 
   const handleWithGoogle = async () => {
     let userObj;
 
-    signInWithPopup(auth, provider).then(async (result) => {
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      const user = result.user;
-      console.log(user);
+    signInWithPopup(auth, provider)
+      .then(async (result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        const user = result.user;
+        console.log(user);
 
-      // create user object and add to data base and state to present on profile page
+        // create user object and add to data base and state to present on profile page
 
-
-      // user exists in Firestore, get number posts & karmas
-      const userRef = doc(db, "users", user.uid);
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists()) {
-        console.log("USER WAS IN FIRESTORE !");
-        const userData = userDoc.data();
-        userObj = {
-          uid: user.uid,
-          name: user.displayName,
-          email: user.email,
-          imgURL: user.photoURL,
-          numPosts: userData.numPosts,
-          upvotes: userData.upvotes,
-          downvotes: userData.downvotes,
-        };
-      } else { // user does not exist in Firestore, so add them and init values
-        console.log("USER WAS *NOT* IN FIRESTORE !!!");
-        try {
-          const userObjPromise = await setDoc(userRef, {
+        // user exists in Firestore, get number posts & karmas
+        const userRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          console.log("USER WAS IN FIRESTORE !");
+          const userData = userDoc.data();
+          userObj = {
+            uid: user.uid,
+            name: user.displayName,
+            email: user.email,
+            imgURL: user.photoURL,
+            numPosts: userData.numPosts,
+            upvotes: userData.upvotes,
+            downvotes: userData.downvotes,
+          };
+        } else {
+          // user does not exist in Firestore, so add them and init values
+          console.log("USER WAS *NOT* IN FIRESTORE !!!");
+          try {
+            const userObjPromise = await setDoc(userRef, {
+              uid: user.uid,
+              name: user.displayName,
+              email: user.email,
+              imgURL: user.photoURL,
+              numPosts: 0,
+              upvotes: 0,
+              downvotes: 0,
+            });
+          } catch (e) {
+            console.error("error: ", e);
+          }
+          userObj = {
             uid: user.uid,
             name: user.displayName,
             email: user.email,
@@ -109,32 +143,20 @@ export const ContextProvider = (props) => {
             numPosts: 0,
             upvotes: 0,
             downvotes: 0,
-          });
-        } catch (e) {
-          console.error("error: ", e);
+          };
         }
-        userObj = {
-          uid: user.uid,
-          name: user.displayName,
-          email: user.email,
-          imgURL: user.photoURL,
-          numPosts: 0,
-          upvotes: 0,
-          downvotes: 0,
-        };
-      }
-    }).then(() => {
-      setCurrentUser(userObj);
-    }).catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      const email = error.email;
-      const credential = GoogleAuthProvider.credentialFromError(error); 
-      console.log(errorCode); // why is this returning an undefined error when its working?  
-    });
-
-  }
-
+      })
+      .then(() => {
+        setCurrentUser(userObj);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.email;
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        console.log(errorCode); // why is this returning an undefined error when its working?
+      });
+  };
 
   const handleSignup = async (userObj) => {
     console.log("signed up");
@@ -180,18 +202,18 @@ export const ContextProvider = (props) => {
         downvotes: 0,
         timeToExpire: newPostObj.timeToExpire.props.timeLeft, // need to fix this... but problem for later
         viewers: 1,
+        posterID: currentUser.uid,
       });
       // update post number in current user
       await updateDoc(doc(db, "users", currentUser.uid), {
         numPosts: increment(1),
-      })
+      });
       // also update in current obj
-      setCurrentUser(prev => {
-        let userObj = {...prev};
+      setCurrentUser((prev) => {
+        let userObj = { ...prev };
         userObj.numPosts += 1;
         return userObj;
-      })
-
+      });
     } catch (e) {
       console.error("error: ", e);
     }
@@ -289,6 +311,9 @@ export const ContextProvider = (props) => {
         handleSignup: handleSignup,
         handleWithGoogle: handleWithGoogle,
         updateUserKarma: updateUserKarma,
+        handleLogout: handleLogout,
+        showPosterProfile: showPosterProfile,
+        posterProfile: posterProfile,
       }}
     >
       {props.children}

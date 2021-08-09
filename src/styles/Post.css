@@ -36,7 +36,8 @@
 .post-slider {
   -webkit-appearance: none;  /* Override default CSS styles */
   appearance: none;
-  width: 100%; /* Full-width */
+  margin-left: -10%;
+  width: 110%; /* Full-width */
   height: 10px; /* Specified height */
   outline: none; /* Remove outline */
   background-color: rgba(109, 255, 96, 0.01);
@@ -80,3 +81,9 @@
     width: 20px;
     background-image: url(../assets/red_clock_small.png);
   }
+
+.post-poster-profile {
+    /* background-color: aqua; */
+    width: 90%;
+    margin-left: 10%;
+}

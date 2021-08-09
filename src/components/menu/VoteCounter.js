@@ -11,12 +11,16 @@ const VoteCounter = (props) => {
     if (ctx.currentUser !== null) {
       // user is logged in
       props.onVote(1);
+    } else {
+      props.votedWhileNoUser();
     }
   };
 
   const handleDownvote = () => {
     if (ctx.currentUser !== null) {
       props.onVote(0);
+    } else {
+      props.votedWhileNoUser();
     }
   };
 

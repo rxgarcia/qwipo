@@ -20,3 +20,11 @@
 .App-title {
   font-size: 48px;
 }
+
+.app-profile-logout {
+  filter: invert(100%);
+  position: absolute;
+  margin-left: 90%;
+  margin-top: 1rem;
+  z-index: 2;
+}

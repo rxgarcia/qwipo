@@ -1,29 +1,27 @@
-import Modal from "../Modal/Modal"
-import { useContext, useState } from "react";
+import Modal from "../Modal/Modal";
+import { useContext } from "react";
 import Context from "../../store/MyContext";
-import profilePic from "../../assets/rigo_cat_profile.png";
+import "../../styles/LoginPage.css";
 
+const LoginPage = (props) => {
+  const ctx = useContext(Context);
 
-const LoginPage = props => {
-    const ctx = useContext(Context);
+  return (
+    <Modal onClose={props.onClose}>
+      <div className="login-container">
+        {ctx.currentPage === "post" && (
+          <h1 className="login-sign-in">Sign in to post!</h1>
+        )}
+        {ctx.currentPage === "profile" && (
+          <h1 className="login-sign-in">Sign in to view your profile!</h1>
+        )}
 
-    const handleSubmit = () => {
-        const dummyUser = {
-            key: Math.random().toString(),
-            name: "Rigo",
-            profilePic: profilePic,
-            email: "bruddddsderwdh@bruh.com",
-            password: "lmaololbruh",
-            numberPosts: 176,
-            upvotes: 1234,
-            downvotes: 456,
-          };
-        ctx.handleLogin(dummyUser);
-    }
-
-    return <Modal onClose={props.onClose}>
-        <button onClick={ctx.handleWithGoogle}>Login With Google!</button>
+        <button className="login-button" onClick={ctx.handleWithGoogle}>
+          Sign in With Google
+        </button>
+      </div>
     </Modal>
-}
+  );
+};
 
 export default LoginPage;
