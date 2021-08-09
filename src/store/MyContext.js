@@ -32,12 +32,44 @@ const Context = React.createContext({
   handleLogin: () => {},
   handleSignup: () => {},
   handleWithGoogle: () => {},
+  updateUserKarma: () => {},
 });
 
 export const ContextProvider = (props) => {
   const [postsList, setPostsList] = useState([]);
   const [currentPage, setCurrentPage] = useState("home");
   const [currentUser, setCurrentUser] = useState(null);
+
+
+  const updateUserKarma = async (vote, postID) => {
+    const postRef = doc(db, "posts", postID);
+    const userRef = doc(db, "users", currentUser.uid);
+    if (vote === 1) {
+      await updateDoc(postRef, {
+        upvotes: increment(1),
+      });
+      await updateDoc(userRef, {
+        upvotes: increment(1)
+      })
+      setCurrentUser(prev => {
+        let userObj = {...prev};
+        userObj.upvotes += 1;
+        return userObj;
+      })
+    } else {
+      await updateDoc(postRef, {
+        downvotes: increment(1),
+      });
+      await updateDoc(userRef, {
+        downvotes: increment(1)
+      })
+      setCurrentUser(prev => {
+        let userObj = {...prev};
+        userObj.downvotes += 1;
+        return userObj;
+      })
+    }
+  }
 
   const handleWithGoogle = async () => {
     let userObj;
@@ -154,11 +186,11 @@ export const ContextProvider = (props) => {
         numPosts: increment(1),
       })
       // also update in current obj
-      // setCurrentUser(prev => {
-      //   let userObj = {...prev.userObj};
-      //   userObj.numPosts += 1;
-      //   return {userObj};
-      // })
+      setCurrentUser(prev => {
+        let userObj = {...prev};
+        userObj.numPosts += 1;
+        return userObj;
+      })
 
     } catch (e) {
       console.error("error: ", e);
@@ -256,6 +288,7 @@ export const ContextProvider = (props) => {
         handleLogin: handleLogin,
         handleSignup: handleSignup,
         handleWithGoogle: handleWithGoogle,
+        updateUserKarma: updateUserKarma,
       }}
     >
       {props.children}

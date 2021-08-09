@@ -16,21 +16,17 @@ const Post = (props) => {
 
   const handleVote = async (vote) => {
     const postRef = doc(db, "posts", props.id);
+    const userRef = doc(db, "users", ctx.currentUser.uid);
     if (vote === 1) {
       setUpvotes((prev) => {
         return prev + 1;
-      });
-      await updateDoc(postRef, {
-        upvotes: increment(1),
       });
     } else {
       setDownvotes((prev) => {
         return prev + 1;
       });
-      await updateDoc(postRef, {
-        downvotes: increment(1),
-      });
     }
+    ctx.updateUserKarma(vote, props.id); // update in firestore user and posts
   };
 
   useEffect(() => {

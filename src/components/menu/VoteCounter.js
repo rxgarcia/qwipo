@@ -1,14 +1,23 @@
 import "../../styles/VoteCounter.css";
 import upvote from "../../assets/upvote.png";
 import downvote from "../../assets/downvote.png";
+import Context from "../../store/MyContext";
+import { useContext } from "react";
 
 const VoteCounter = (props) => {
+  const ctx = useContext(Context);
+
   const handleUpvote = () => {
-    props.onVote(1);
+    if (ctx.currentUser !== null) {
+      // user is logged in
+      props.onVote(1);
+    }
   };
 
   const handleDownvote = () => {
-    props.onVote(0);
+    if (ctx.currentUser !== null) {
+      props.onVote(0);
+    }
   };
 
   return (
