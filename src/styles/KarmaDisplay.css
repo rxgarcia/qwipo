@@ -13,6 +13,7 @@
     height: 10px;
     -webkit-appearance: none;
     color: #16eb56;
+    border: none;
 }
 
 .karma-display-slider::-webkit-slider-thumb {

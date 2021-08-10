@@ -97,8 +97,7 @@ export const ContextProvider = (props) => {
 
     signInWithPopup(auth, provider)
       .then(async (result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
+        // const credential = GoogleAuthProvider.credentialFromResult(result);
         const user = result.user;
         console.log(user);
 
@@ -123,7 +122,7 @@ export const ContextProvider = (props) => {
           // user does not exist in Firestore, so add them and init values
           console.log("USER WAS *NOT* IN FIRESTORE !!!");
           try {
-            const userObjPromise = await setDoc(userRef, {
+            await setDoc(userRef, {
               uid: user.uid,
               name: user.displayName,
               email: user.email,
@@ -151,9 +150,9 @@ export const ContextProvider = (props) => {
       })
       .catch((error) => {
         const errorCode = error.code;
-        const errorMessage = error.message;
-        const email = error.email;
-        const credential = GoogleAuthProvider.credentialFromError(error);
+        // const errorMessage = error.message;
+        // const email = error.email;
+        // const credential = GoogleAuthProvider.credentialFromError(error);
         console.log(errorCode); // why is this returning an undefined error when its working?
       });
   };

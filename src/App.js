@@ -12,6 +12,7 @@ const App = () => {
   const ctx = useContext(Context);
   useEffect(() => {
     ctx.loadPosts();
+    console.log("loaded posts");
   }, []);
   console.log(" Refreshed App | APP CURRENT PAGE::: ", ctx.currentPage);
 

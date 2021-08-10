@@ -12,22 +12,26 @@ const Post = (props) => {
   const [timer, setTimer] = useState(props.timeToExpire);
   const [postColor, setPostColor] = useState("");
   const [promptLogin, setPromptLogin] = useState(false);
+  const [userVoted, setUserVoted] = useState(false);
 
   const votedWhileNoUser = () => {
     setPromptLogin(true);
   };
 
   const handleVote = async (vote) => {
-    if (vote === 1) {
-      setUpvotes((prev) => {
-        return prev + 1;
-      });
-    } else {
-      setDownvotes((prev) => {
-        return prev + 1;
-      });
+    if (!userVoted) {
+      setUserVoted(true);
+      if (vote === 1) {
+        setUpvotes((prev) => {
+          return prev + 1;
+        });
+      } else {
+        setDownvotes((prev) => {
+          return prev + 1;
+        });
+      }
+      ctx.updateUserKarma(vote, props.id); // update in firestore user and posts
     }
-    ctx.updateUserKarma(vote, props.id); // update in firestore user and posts
   };
 
   useEffect(() => {
