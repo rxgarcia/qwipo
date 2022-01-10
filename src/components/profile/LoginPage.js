@@ -15,9 +15,11 @@ const LoginPage = (props) => {
         {ctx.currentPage === "profile" && (
           <h1 className="login-sign-in">Sign in to view your profile!</h1>
         )}
-
         <button className="login-button" onClick={ctx.handleWithGoogle}>
           Sign in With Google
+        </button>
+        <button className="login-button recruiter-button" onClick={ctx.handleRecruiterLogin}>
+          Recruiter Mode
         </button>
       </div>
     </Modal>

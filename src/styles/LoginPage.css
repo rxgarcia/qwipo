@@ -4,12 +4,16 @@
 }
 
 .login-container {
-    align-items: center;
     text-align: center;
 }
 
+.login-buttons {
+    align-items: flex-start;
+}
+
 .login-button {
-    width: 40%;
+    width: 60%;
+    margin-bottom: 10px;
     background-color: rgb(97, 147, 255);
     border: none;
     padding: .5rem;
@@ -18,4 +22,8 @@
     color: #ffffff;
     font-size: 1rem;
     cursor: pointer;
+}
+
+.recruiter-button {
+    background-color: rgb(255, 105, 79);
 }

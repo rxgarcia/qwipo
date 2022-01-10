@@ -39,6 +39,7 @@ const Context = React.createContext({
   handleLogout: () => {},
   showPosterProfile: () => {},
   posterProfile: {},
+  handleRecruiterLogin: () => {},
 });
 
 export const ContextProvider = (props) => {
@@ -46,6 +47,12 @@ export const ContextProvider = (props) => {
   const [currentPage, setCurrentPage] = useState("home");
   const [currentUser, setCurrentUser] = useState(null);
   const [posterProfile, setPosterProfile] = useState(null);
+
+  const handleRecruiterLogin = async () => {
+    const recruiterRef = doc(db, "users", "W0IPTsWAbjeVWbxxu9BD"); // recruiter UID
+    const recruiterUser = await (await getDoc(recruiterRef)).data();
+    setCurrentUser(recruiterUser);
+  }
 
   const showPosterProfile = async (postID) => {
     setCurrentPage("posterProfile");
@@ -74,6 +81,19 @@ export const ContextProvider = (props) => {
     const postRef = doc(db, "posts", postID);
     const posterID = await (await getDoc(postRef)).data().posterID;
     const posterRef = doc(db, "users", posterID);
+
+    if (posterID === currentUser.uid) {
+      setCurrentUser((prev) => {
+        let userObj = { ...prev };
+        if (vote === 1) {
+          userObj.upvotes += 1;
+        } else {
+          userObj.downvotes += 1;
+        }
+        return userObj;
+      });
+    }
+    
     if (vote === 1) {
       await updateDoc(postRef, {
         upvotes: increment(1),
@@ -313,6 +333,7 @@ export const ContextProvider = (props) => {
         handleLogout: handleLogout,
         showPosterProfile: showPosterProfile,
         posterProfile: posterProfile,
+        handleRecruiterLogin: handleRecruiterLogin,
       }}
     >
       {props.children}
